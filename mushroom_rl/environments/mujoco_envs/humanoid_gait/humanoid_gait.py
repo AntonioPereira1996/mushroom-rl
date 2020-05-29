@@ -34,7 +34,7 @@ class HumanoidGait(MuJoCo):
                 for actions. If not apply torques directly to the joints;
             goal_reward (string, None): type of trajectory used for training
                 Options available:
-                    'trajectory'               - Use trajectory in assets/GaitTrajectory.npz
+                    'full_trajectory'          - Use trajectory in assets/GaitTrajectory.npz
                                                  as reference;
                     'pure_velocity_trajectory' - Use only velocity trajectory of COM in
                                                  assets/GaitTrajectory.npz as reference;
