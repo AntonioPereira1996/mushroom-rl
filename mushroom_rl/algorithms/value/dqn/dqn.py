@@ -83,14 +83,14 @@ class DQN(Agent):
 
         self._add_save_attr(
             _fit_params='pickle',
-            _batch_size='numpy',
-            _n_approximators='numpy',
-            _clip_reward='numpy',
-            _target_update_frequency='numpy',
+            _batch_size='primitive',
+            _n_approximators='primitive',
+            _clip_reward='primitive',
+            _target_update_frequency='primitive',
             _replay_memory='mushroom',
-            _n_updates='numpy',
-            approximator='pickle',
-            target_approximator='pickle'
+            _n_updates='primitive',
+            approximator='mushroom',
+            target_approximator='mushroom'
         )
 
         super().__init__(mdp_info, policy)
@@ -172,6 +172,8 @@ class DQN(Agent):
         else:
             self._fit = self._fit_standard
 
+        self.policy.set_q(self.approximator)
+
 
 class DoubleDQN(DQN):
     """
@@ -203,7 +205,7 @@ class AveragedDQN(DQN):
 
         self._n_fitted_target_models = 1
 
-        self._add_save_attr(_n_fitted_target_models='numpy')
+        self._add_save_attr(_n_fitted_target_models='primitive')
 
         assert len(self.target_approximator) > 1
 

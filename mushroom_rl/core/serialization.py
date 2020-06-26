@@ -47,12 +47,7 @@ class Serializable(object):
                 MushroomRL data structures;
             folder (string, ''): subfolder to be used by the save method.
         """
-        config_data = dict(
-            type=type(self),
-            save_attributes=self._save_attributes
-        )
-
-        self._save_pickle(zip_file, 'config', config_data, folder=folder)
+        primitive_dictionary = dict()
 
         for att, method in self._save_attributes.items():
 
@@ -61,7 +56,9 @@ class Serializable(object):
                 attribute = getattr(self, att) if hasattr(self, att) else None
 
                 if attribute is not None:
-                    if hasattr(self, '_save_{}'.format(method)):
+                    if method == 'primitive':
+                        primitive_dictionary[att] = attribute
+                    elif hasattr(self, '_save_{}'.format(method)):
                         save_method = getattr(self, '_save_{}'.format(method))
                         file_name = "{}.{}".format(att, method)
                         save_method(zip_file, file_name, attribute,
@@ -71,6 +68,14 @@ class Serializable(object):
                             "Method _save_{} is not implemented for class '{}'".
                                 format(method, self.__class__.__name__)
                         )
+
+        config_data = dict(
+            type=type(self),
+            save_attributes=self._save_attributes,
+            primitive_dictionary=primitive_dictionary
+        )
+
+        self._save_pickle(zip_file, 'config', config_data, folder=folder)
 
     @classmethod
     def load(cls, path):
@@ -97,31 +102,50 @@ class Serializable(object):
     @classmethod
     def load_zip(cls, zip_file, folder=''):
         config_path = Serializable._append_folder(folder, 'config')
-        object_type, save_attributes = cls._load_pickle(zip_file,
-                                                        config_path).values()
+        object_type, save_attributes, primitive_dictionary = \
+            cls._load_pickle(zip_file, config_path).values()
 
-        loaded_object = object_type.__new__(object_type)
-        setattr(loaded_object, '_save_attributes', save_attributes)
+        if object_type is list:
+            return cls._load_list(zip_file, folder, primitive_dictionary['len'])
+        else:
+            loaded_object = object_type.__new__(object_type)
+            setattr(loaded_object, '_save_attributes', save_attributes)
 
-        for att, method in save_attributes.items():
-            method = method[:-1] if method.endswith('!') else method
-            file_name = Serializable._append_folder(
-                folder, '{}.{}'.format(att, method)
-            )
+            for att, method in save_attributes.items():
+                mandatory = not method.endswith('!')
+                method = method[:-1] if not mandatory else method
+                file_name = Serializable._append_folder(
+                    folder, '{}.{}'.format(att, method)
+                )
 
-            if file_name in zip_file.namelist() or method == 'mushroom':
-                load_method = getattr(cls, '_load_{}'.format(method))
-                if load_method is None:
-                    raise NotImplementedError('Method _load_{} is not'
-                                              'implemented'.format(method))
-                att_val = load_method(zip_file, file_name)
-                setattr(loaded_object, att, att_val)
-            else:
-                setattr(loaded_object, att, None)
+                if method == 'primitive' and att in primitive_dictionary:
+                    setattr(loaded_object, att, primitive_dictionary[att])
+                elif file_name in zip_file.namelist() or \
+                        (method == 'mushroom' and mandatory):
+                    load_method = getattr(cls, '_load_{}'.format(method))
+                    if load_method is None:
+                        raise NotImplementedError('Method _load_{} is not'
+                                                  'implemented'.format(method))
+                    att_val = load_method(zip_file, file_name)
+                    setattr(loaded_object, att, att_val)
 
-        loaded_object._post_load()
+                else:
+                    setattr(loaded_object, att, None)
 
-        return loaded_object
+            loaded_object._post_load()
+
+            return loaded_object
+
+    @classmethod
+    def _load_list(self, zip_file, folder, length):
+        loaded_list = list()
+
+        for i in range(length):
+            element_folder = Serializable._append_folder(folder, str(i))
+            loaded_element = Serializable.load_zip(zip_file, element_folder)
+            loaded_list.append(loaded_element)
+
+        return loaded_list
 
     def copy(self):
         """
@@ -189,7 +213,7 @@ class Serializable(object):
     def _save_pickle(zip_file, name, obj, folder, **_):
         path = Serializable._append_folder(folder, name)
         with zip_file.open(path, 'w') as f:
-            pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(obj, f, protocol=pickle.DEFAULT_PROTOCOL)
 
     @staticmethod
     def _save_numpy(zip_file, name, obj, folder, **_):
@@ -213,4 +237,24 @@ class Serializable(object):
     @staticmethod
     def _save_mushroom(zip_file, name, obj, folder, full_save):
         new_folder = Serializable._append_folder(folder, name)
-        obj.save_zip(zip_file, full_save=full_save, folder=new_folder)
+        if isinstance(obj, list):
+            config_data = dict(
+                type=list,
+                save_attributes=dict(),
+                primitive_dictionary=dict(len=len(obj))
+            )
+
+            Serializable._save_pickle(zip_file, 'config', config_data, folder=new_folder)
+            for i, element in enumerate(obj):
+                element_folder = Serializable._append_folder(new_folder, str(i))
+                element.save_zip(zip_file, full_save=full_save, folder=element_folder)
+        else:
+            obj.save_zip(zip_file, full_save=full_save, folder=new_folder)
+
+    @staticmethod
+    def _get_serialization_method(class_name):
+        if issubclass(class_name, Serializable):
+            return 'mushroom'
+        else:
+            return 'pickle'
+

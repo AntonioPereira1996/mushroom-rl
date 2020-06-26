@@ -81,7 +81,7 @@ def test_q_learning_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
         tu.assert_eq(save_attr, load_attr)
@@ -123,7 +123,7 @@ def test_double_q_learning_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -139,9 +139,9 @@ def test_weighted_q_learning():
     # Train
     core.learn(n_steps=100, n_steps_per_fit=1, quiet=True)
 
-    test_q = np.array([[7.1592415, 4.07094744, 7.10518702, 8.5467274],
-                       [8.08689916, 9.99023438, 5.77871216, 7.51059129],
-                       [6.52294537, 0.86087671, 3.70431496, 9.6875],
+    test_q = np.array([[8.00815525, 4.09343205, 7.94406811, 8.96270031],
+                       [8.31597686, 9.99023438, 6.42921521, 7.70471909],
+                       [7.26069091, 0.87610663, 3.70440836, 9.6875],
                        [0., 0., 0., 0.]])
 
     assert np.allclose(agent.Q.table, test_q)
@@ -161,7 +161,7 @@ def test_weighted_q_learning_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -199,7 +199,7 @@ def test_speedy_q_learning_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -237,7 +237,7 @@ def test_sarsa_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -275,7 +275,7 @@ def test_sarsa_lambda_discrete_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -339,7 +339,7 @@ def test_sarsa_lambda_continuous_linear_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -404,7 +404,7 @@ def test_sarsa_lambda_continuous_nn_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -442,7 +442,7 @@ def test_expected_sarsa_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -506,7 +506,7 @@ def test_true_online_sarsa_lambda_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -544,7 +544,7 @@ def test_r_learning_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
 
@@ -628,7 +628,7 @@ def test_rq_learning_save(tmpdir):
     agent_save.save(agent_path)
     agent_load = Agent.load(agent_path)
 
-    for att, method in agent_save.__dict__.items():
+    for att, method in vars(agent_save).items():
         save_attr = getattr(agent_save, att)
         load_attr = getattr(agent_load, att)
         tu.assert_eq(save_attr, load_attr)

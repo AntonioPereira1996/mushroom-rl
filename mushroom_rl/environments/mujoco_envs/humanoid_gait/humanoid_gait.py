@@ -86,8 +86,6 @@ class HumanoidGait(MuJoCo):
                             ("left_ankle", ObservationType.JOINT_VEL),
                             ]
 
-        additional_data_spec = []
-
         collision_groups = [("floor", ["floor"]),
                             ("left_foot", ["left_foot"]),
                             ("right_foot", ["right_foot"])
@@ -96,11 +94,10 @@ class HumanoidGait(MuJoCo):
         super().__init__(model_path.as_posix(), action_spec, observation_spec, gamma=gamma,
                          horizon=horizon, n_substeps=1,
                          n_intermediate_steps=n_intermediate_steps,
-                         additional_data_spec=additional_data_spec,
                          collision_groups=collision_groups)
 
         if use_muscles:
-            self.external_actuator = MuscleSimulation(self.sim)
+            self.external_actuator = MuscleSimulation(self._sim)
             self.info.action_space = spaces.Box(
                 *self.external_actuator.get_action_space())
         else:
@@ -117,13 +114,13 @@ class HumanoidGait(MuJoCo):
             goal_reward_params = dict()
 
         if goal_reward == "full_trajectory" or goal_reward == "pure_velocity_trajectory":
-            control_dt = self.sim.model.opt.timestep * self.n_intermediate_steps
-            self.goal_reward = CompleteTrajectoryReward(self.sim, control_dt,
+            control_dt = self._sim.model.opt.timestep * self.n_intermediate_steps
+            self.goal_reward = CompleteTrajectoryReward(self._sim, control_dt,
                                                         **goal_reward_params)
         elif goal_reward == "vel_profile":
-            self.goal_reward = VelocityProfileReward(self.sim, **goal_reward_params)
+            self.goal_reward = VelocityProfileReward(self._sim, **goal_reward_params)
         elif goal_reward == "max_vel":
-            self.goal_reward = MaxVelocityReward(self.sim, **goal_reward_params)
+            self.goal_reward = MaxVelocityReward(self._sim, **goal_reward_params)
         elif goal_reward is None:
             self.goal_reward = NoGoalReward()
         else:
@@ -161,7 +158,7 @@ class HumanoidGait(MuJoCo):
         state, reward, absorbing, info = super().step(action)
 
         self.mean_obs.update_stats(state)
-        self.mean_vel.update_stats(self.sim.data.qvel[0:3])
+        self.mean_vel.update_stats(self._sim.data.qvel[0:3])
 
         avg_obs = self.mean_obs.mean
         avg_obs[13:16] = self.mean_vel.mean
@@ -169,24 +166,24 @@ class HumanoidGait(MuJoCo):
 
     def render(self):
         if self.viewer is None:
-            self.viewer = mujoco_py.MjViewer(self.sim)
+            self.viewer = mujoco_py.MjViewer(self._sim)
             self.viewer._render_every_frame = True
         self.viewer.render()
 
-    def setup(self):
+    def _setup(self):
         self.goal_reward.reset_state()
         start_obs = self._reset_model(qpos_noise=0.0, qvel_noise=0.0)
         start_vel = (
-            self.sim.data.qvel[0:3] if (self.goal_reward is None or isinstance(
+            self._sim.data.qvel[0:3] if (self.goal_reward is None or isinstance(
                 self.goal_reward, MaxVelocityReward)
-                                      ) else self.goal_reward.get_observation())
+                                         ) else self.goal_reward.get_observation())
 
         self.mean_vel.reset(start_vel)
         self.mean_obs.reset(start_obs)
         self.mean_act.reset()
         self.external_actuator.reset()
 
-    def reward(self, state, action, next_state):
+    def _reward(self, state, action, next_state):
         live_reward = 1.0
 
         goal_reward = self.goal_reward(state, action, next_state)
@@ -211,7 +208,7 @@ class HumanoidGait(MuJoCo):
 
         return total_reward
 
-    def is_absorbing(self, state):
+    def _is_absorbing(self, state):
         return (self._has_fallen(state)
                 or self.goal_reward.is_absorbing(state)
                 or self.external_actuator.is_absorbing(state)
@@ -232,21 +229,21 @@ class HumanoidGait(MuJoCo):
                 np.concatenate([sim_high, grf_high, r_high, a_high]))
 
     def _reset_model(self, qpos_noise=0.0, qvel_noise=0.0):
-        self._set_state(self.sim.data.qpos + np.random.uniform(
-            low=-qpos_noise, high=qpos_noise, size=self.sim.model.nq),
-            self.sim.data.qvel + np.random.uniform(low=-qvel_noise,
-                                                   high=qvel_noise,
-                                                   size=self.sim.model.nv)
-        )
+        self._set_state(self._sim.data.qpos + np.random.uniform(
+            low=-qpos_noise, high=qpos_noise, size=self._sim.model.nq),
+                        self._sim.data.qvel + np.random.uniform(low=-qvel_noise,
+                                                                high=qvel_noise,
+                                                                size=self._sim.model.nv)
+                        )
 
         return self._create_observation()
 
     def _set_state(self, qpos, qvel):
-        old_state = self.sim.get_state()
+        old_state = self._sim.get_state()
         new_state = mujoco_py.MjSimState(old_state.time, qpos, qvel,
                                          old_state.act, old_state.udd_state)
-        self.sim.set_state(new_state)
-        self.sim.forward()
+        self._sim.set_state(new_state)
+        self._sim.forward()
 
     @staticmethod
     def _has_fallen(state):
@@ -306,8 +303,8 @@ class HumanoidGait(MuJoCo):
 
     def _simulation_post_step(self):
         grf = np.concatenate(
-            [self.get_collision_force("floor", "right_foot")[:3],
-             self.get_collision_force("floor", "left_foot")[:3]]
+            [self._get_collision_force("floor", "right_foot")[:3],
+             self._get_collision_force("floor", "left_foot")[:3]]
         )
 
         self.mean_grf.update_stats(grf)
@@ -317,5 +314,5 @@ class HumanoidGait(MuJoCo):
         self.external_actuator.update_state()
 
     def _get_body_center_of_mass_pos(self, body_name):
-        return self.sim.data.subtree_com[
-            self.sim.model._body_name2id[body_name]]
+        return self._sim.data.subtree_com[
+            self._sim.model._body_name2id[body_name]]
