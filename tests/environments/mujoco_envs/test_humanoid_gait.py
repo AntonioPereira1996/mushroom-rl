@@ -7,10 +7,17 @@ try:
 
 
     def create_mdp(goal, gamma, horizon):
-        if goal == "trajectory":
+        if goal == "full_trajectory":
             mdp = HumanoidGait(gamma=gamma, horizon=horizon, n_intermediate_steps=10,
-                               goal_reward="trajectory",
+                               goal_reward="full_trajectory",
                                goal_reward_params=dict(use_error_terminate=True),
+                               use_muscles=True,
+                               obs_avg_window=1, act_avg_window=1)
+
+        elif goal == "velocity_trajectory":
+            mdp = HumanoidGait(gamma=gamma, horizon=horizon, n_intermediate_steps=10,
+                               goal_reward="velocity_trajectory",
+                               goal_reward_params=dict(use_error_terminate=False),
                                use_muscles=True,
                                obs_avg_window=1, act_avg_window=1)
 
@@ -42,7 +49,7 @@ try:
         # MDP
         gamma = 0.99
         horizon = 2000
-        for goal in ["trajectory", "vel_profile", "max_vel"]:
+        for goal in ["full_trajectory", "velocity_trajectory", "vel_profile", "max_vel"]:
             mdp = create_mdp(goal, gamma, horizon)
 
             s = 0

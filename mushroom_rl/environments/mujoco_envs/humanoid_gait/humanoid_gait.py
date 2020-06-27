@@ -36,7 +36,7 @@ class HumanoidGait(MuJoCo):
                 Options available:
                     'full_trajectory'          - Use trajectory in assets/GaitTrajectory.npz
                                                  as reference;
-                    'pure_velocity_trajectory' - Use only velocity trajectory of COM in
+                    'velocity_trajectory'      - Use only velocity trajectory of COM in
                                                  assets/GaitTrajectory.npz as reference;
                     'vel_profile'              - Velocity goal for the center of mass of the
                                                  model to follow. The goal is given by a
@@ -113,8 +113,8 @@ class HumanoidGait(MuJoCo):
         if goal_reward_params is None:
             goal_reward_params = dict()
 
-        if goal_reward == "full_trajectory" or goal_reward == "pure_velocity_trajectory":
-            control_dt = self._sim.model.opt.timestep * self.n_intermediate_steps
+        if goal_reward == "full_trajectory" or goal_reward == "velocity_trajectory":
+            control_dt = self._sim.model.opt.timestep * self._n_intermediate_steps
             self.goal_reward = CompleteTrajectoryReward(self._sim, control_dt,
                                                         **goal_reward_params)
         elif goal_reward == "vel_profile":
@@ -131,7 +131,7 @@ class HumanoidGait(MuJoCo):
             self.reward_weights = dict(live_reward=0.10, goal_reward=0.40,
                                        traj_vel_reward=0.50,
                                        move_cost=0.10, fall_cost=0.00)
-        elif goal_reward == "pure_velocity_trajectory":
+        elif goal_reward == "velocity_trajectory":
             self.reward_weights = dict(live_reward=0.00, goal_reward=0.00,
                                        traj_vel_reward=1.00,
                                        move_cost=0.00, fall_cost=0.00)
