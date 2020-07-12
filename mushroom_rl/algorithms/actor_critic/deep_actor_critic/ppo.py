@@ -21,7 +21,7 @@ class PPO(Agent):
 
     """
     def __init__(self, mdp_info, policy, actor_optimizer, critic_params,
-                 n_epochs_policy, batch_size, eps_ppo, lam, quiet=True,
+                 n_epochs_policy, batch_size, eps_ppo, lam, ent_weight, quiet=True,
                  critic_fit_params=None):
         """
         Constructor.
@@ -52,6 +52,7 @@ class PPO(Agent):
         self._optimizer = actor_optimizer['class'](policy.parameters(), **actor_optimizer['params'])
 
         self._lambda = lam
+        self._ent_weight = ent_weight
 
         self._V = Regressor(TorchApproximator, **critic_params)
 
@@ -65,6 +66,7 @@ class PPO(Agent):
             _eps_ppo='primitive',
             _optimizer='torch',
             _lambda='primitive',
+            _ent_weight='primitive',
             _V='mushroom',
             _quiet='primitive',
             _iter='primitive'
@@ -110,7 +112,8 @@ class PPO(Agent):
                 clipped_ratio = torch.clamp(prob_ratio, 1 - self._eps_ppo,
                                             1 + self._eps_ppo)
                 loss = -torch.mean(torch.min(prob_ratio * adv_i,
-                                             clipped_ratio * adv_i))
+                                             clipped_ratio * adv_i)) \
+                       - self.policy.entropy() * self._ent_weight
                 loss.backward()
                 self._optimizer.step()
 
