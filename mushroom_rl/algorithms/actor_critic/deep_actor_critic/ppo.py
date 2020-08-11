@@ -37,6 +37,7 @@ class PPO(Agent):
             eps_ppo (float): value for probability ratio clipping;
             lam float(float, 1.): lambda coefficient used by generalized
                 advantage estimation;
+            ent_weight(float): entropy coefficient for the loss of the actor;
             quiet (bool, True): if true, the algorithm will print debug
                 information;
             critic_fit_params (dict, None): parameters of the fitting algorithm
