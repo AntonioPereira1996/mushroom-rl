@@ -72,7 +72,7 @@ class Core(object):
             fit_condition = lambda: self._current_episodes_counter\
                                      >= self._n_episodes_per_fit
 
-        self._run(n_steps, n_episodes, fit_condition, render, quiet)
+        return self._run(n_steps, n_episodes, fit_condition, render, quiet)
 
     def evaluate(self, initial_states=None, n_steps=None, n_episodes=None,
                  render=False, quiet=False):
@@ -133,6 +133,7 @@ class Core(object):
         self._current_steps_counter = 0
 
         dataset = list()
+        full_dataset = list()
         last = True
         while move_condition():
             if last:
@@ -140,6 +141,7 @@ class Core(object):
 
             sample = self._step(render)
             dataset.append(sample)
+            full_dataset.append(sample)
 
             self.callback_step([sample])
 
@@ -170,7 +172,7 @@ class Core(object):
         steps_progress_bar.close()
         episodes_progress_bar.close()
 
-        return dataset
+        return full_dataset
 
     def _step(self, render):
         """
