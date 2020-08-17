@@ -165,10 +165,10 @@ class HumanoidGait(MuJoCo):
         return avg_obs, reward, absorbing, info
 
     def render(self):
-        if self.viewer is None:
-            self.viewer = mujoco_py.MjViewer(self._sim)
-            self.viewer._render_every_frame = True
-        self.viewer.render()
+        if self._viewer is None:
+            self._viewer = mujoco_py.MjViewer(self._sim)
+            self._viewer._render_every_frame = True
+        self._viewer.render()
 
     def _setup(self):
         self.goal_reward.reset_state()
