@@ -3,38 +3,38 @@ from muscle_simulation_stepupdate import step_update_state
 
 
 class MuscleTendonComplex:
-    def __init__(self, nameMuscle,frcmax, vmax, lslack, lopt,
+    def __init__(self, nameMuscle, frcmax, vmax, lslack, lopt,
                  lce, r, phiref, phimaxref, rho, dirAng, phiScale,
                  offsetCorr, timestep, angJoi, eref=0.04, act=0.01,
                  tau=0.01, w=0.56, c=0.05, N=1.5, K=5.0, stim=0.0,
                  vce=0.0, frcmtc=0.0, lmtc=0.0):
 
         self.init_nameMuscle = nameMuscle
-        self.init_frcmax     = float(frcmax)
-        self.init_vmax       = float(vmax)
-        self.init_eref       = float(eref)
-        self.init_lslack     = float(lslack)
-        self.init_lopt       = float(lopt)
-        self.init_tau        = float(tau)
-        self.init_w          = float(w)
-        self.init_c          = float(c)
-        self.init_N          = float(N)
-        self.init_K          = float(K)
-        self.init_stim       = float(stim)
-        self.init_act        = float(act)
-        self.init_lmtc       = float(lmtc)
-        self.init_lce        = float(lce)
-        self.init_vce        = float(vce)
-        self.init_frcmtc     = float(frcmtc)
-        self.init_r          = r.astype('float')
-        self.init_phiref     = phiref.astype('float')
-        self.init_phimaxref  = phimaxref.astype('float')
-        self.init_rho        = rho.astype('float')
-        self.init_dirAng     = dirAng.astype('float')
-        self.init_phiScale   = phiScale.astype('float')
+        self.init_frcmax = float(frcmax)
+        self.init_vmax = float(vmax)
+        self.init_eref = float(eref)
+        self.init_lslack = float(lslack)
+        self.init_lopt = float(lopt)
+        self.init_tau = float(tau)
+        self.init_w = float(w)
+        self.init_c = float(c)
+        self.init_N = float(N)
+        self.init_K = float(K)
+        self.init_stim = float(stim)
+        self.init_act = float(act)
+        self.init_lmtc = float(lmtc)
+        self.init_lce = float(lce)
+        self.init_vce = float(vce)
+        self.init_frcmtc = float(frcmtc)
+        self.init_r = r.astype('float')
+        self.init_phiref = phiref.astype('float')
+        self.init_phimaxref = phimaxref.astype('float')
+        self.init_rho = rho.astype('float')
+        self.init_dirAng = dirAng.astype('float')
+        self.init_phiScale = phiScale.astype('float')
         self.init_offsetCorr = offsetCorr.astype('int')
-        self.init_timestep   = float(timestep)
-        self.init_angJoi     = angJoi.astype('float')
+        self.init_timestep = float(timestep)
+        self.init_angJoi = angJoi.astype('float')
 
         self.reset_state()
 
@@ -88,58 +88,62 @@ class MuscleTendonComplex:
         self.timestep, self.MR, self.typeMuscle, \
         self.lse, self.Lse, self.Lce, self.actsubstep, \
         self.lcesubstep, self.lce_avg, self.vce_avg, self.frcmtc_avg, self.act_avg, self.frame = \
-        step_update_state(
-            self.frcmax, self.vmax, self.eref, self.lslack, self.lopt, self.tau,
-            self.w, self.c, self.N, self.K, self.stim, self.act, self.lmtc, self.lce,
-            self.vce, self.frcmtc,
-            self.r, self.phiref,
-            self.phimaxref, self.rho,
-            self.dirAng, self.phiScale,
-            angJoi, self.levelArm, self.offsetCorr,
-            self.timestep, self.MR, self.typeMuscle,
-            self.lse, self.Lse, self.Lce, self.actsubstep,
-            self.lcesubstep, self.lce_avg, self.vce_avg, self.frcmtc_avg, self.act_avg, self.frame)
+            step_update_state(
+                self.frcmax, self.vmax, self.eref, self.lslack, self.lopt, self.tau,
+                self.w, self.c, self.N, self.K, self.stim, self.act, self.lmtc, self.lce,
+                self.vce, self.frcmtc,
+                self.r, self.phiref,
+                self.phimaxref, self.rho,
+                self.dirAng, self.phiScale,
+                angJoi, self.levelArm, self.offsetCorr,
+                self.timestep, self.MR, self.typeMuscle,
+                self.lse, self.Lse, self.Lce, self.actsubstep,
+                self.lcesubstep, self.lce_avg, self.vce_avg, self.frcmtc_avg, self.act_avg, self.frame)
 
     def reset_state(self):
-        self.frame      = int(0)
-        self.lce_avg    = float(0)
+        self.frame = int(0)
+        self.lce_avg = float(0)
         self.frcmtc_avg = float(0)
-        self.act_avg    = float(0)
-        self.vce_avg    = float(0)
+        self.act_avg = float(0)
+        self.vce_avg = float(0)
 
         self.nameMuscle = self.init_nameMuscle
-        self.frcmax     = self.init_frcmax
-        self.vmax       = self.init_vmax
-        self.eref       = self.init_eref
-        self.lslack     = self.init_lslack
-        self.lopt       = self.init_lopt
-        self.tau        = self.init_tau
-        self.w          = self.init_w
-        self.c          = self.init_c
-        self.N          = self.init_N
-        self.K          = self.init_K
-        self.stim       = self.init_stim
-        self.act        = self.init_act
-        self.lmtc       = self.init_lmtc
-        self.lce        = self.init_lce
-        self.vce        = self.init_vce
-        self.frcmtc     = self.init_frcmtc
-        self.r          = self.init_r
-        self.phiref     = self.init_phiref
-        self.phimaxref  = self.init_phimaxref
-        self.rho        = self.init_rho
-        self.dirAng     = self.init_dirAng
-        self.phiScale   = self.init_phiScale
+        self.frcmax = self.init_frcmax
+        self.vmax = self.init_vmax
+        self.eref = self.init_eref
+        self.lslack = self.init_lslack
+        self.lopt = self.init_lopt
+        self.tau = self.init_tau
+        self.w = self.init_w
+        self.c = self.init_c
+        self.N = self.init_N
+        self.K = self.init_K
+        self.stim = self.init_stim
+        self.act = self.init_act
+        self.lmtc = self.init_lmtc
+        self.lce = self.init_lce
+        self.vce = self.init_vce
+        self.frcmtc = self.init_frcmtc
+        self.r = self.init_r
+        self.phiref = self.init_phiref
+        self.phimaxref = self.init_phimaxref
+        self.rho = self.init_rho
+        self.dirAng = self.init_dirAng
+        self.phiScale = self.init_phiScale
         self.offsetCorr = self.init_offsetCorr
-        self.timestep   = self.init_timestep
-        self.angJoi     = self.init_angJoi
-
+        self.timestep = self.init_timestep
+        self.angJoi = self.init_angJoi
 
 
 class TIA(MuscleTendonComplex):
     """
-    TIA, tibialis anterior muscle
+     Tibialis Anterior (TIA): The Tibialis anterior (Tibialis anticus) is situated on the lateral
+        side of the tibia. In real human it serves multiple function which are, Dorsal Flexion
+        of the ankle, Inversion of the foot, Adduction of the foot and also Contributing in
+        maintaining the medial arch of the foot. Here TIA is modelled as muscle actuating the
+        ankle dorsiflexion in the sagittal plane.
     """
+
     def __init__(self, angAnk, timestep):
         frcmax = 800  # maximum isometric force [N]
         lopt = 0.06  # optimum fiber length CE [m]
@@ -174,8 +178,12 @@ class TIA(MuscleTendonComplex):
 
 class SOL(MuscleTendonComplex):
     """
-    SOL, soleus muscle
+     Soleus (SOL): Soleus muscles is Located in superficial posterior compartment of the
+        leg, along with GAS it helps in the plantarflexion of the ankle joint. Here SOL is
+        modelled as a muscle actuating the ankle plantarflexion in the sagittal plane.
+
     """
+
     def __init__(self, angAnk, timestep):
         frcmax = 4000  # maximum isometric force [N]
         lopt = 0.04  # optimum fiber length CE [m]
@@ -210,8 +218,13 @@ class SOL(MuscleTendonComplex):
 
 class GAS(MuscleTendonComplex):
     """
-    GAS, gastronemius msucle
+     Gastrocnemius (GAS): Gastrocnemius muscle which the major bulk at the back of
+        lower leg is a bi-articular muscle having two heads and runs from back of knee to the
+        heel. The gastrocnemius helps plantarflexion of the ankle joint and flexion of the knee
+        joint. Here GAS is modelled as a bi-articular MTU contributing to the knee flexion
+        and ankle plantarflexion actuations in the sagittal plane.
     """
+
     def __init__(self, angKne, angAnk, timestep):
         frcmax = 1500  # maximum isometric force [N]
         lopt = 0.05  # optimum fiber length CE [m]
@@ -256,8 +269,11 @@ class GAS(MuscleTendonComplex):
 
 class BFSH(MuscleTendonComplex):
     """
-    BFSH, biceps femoris short head muscle
+    Biceps Femoris Short Head(BFSH): This is a part of hamstring muscle in the real hu-
+        man and is responsible for knee flexion. Here BFSH is modelled as muscle contributing
+        to the knee flexion actuation in the sagittal plane.
     """
+
     def __init__(self, angKne, timestep):
         frcmax = 350  # maximum isometric force [N]
         lopt = 0.12  # optimum fiber length CE [m]
@@ -289,8 +305,11 @@ class BFSH(MuscleTendonComplex):
 
 class VAS(MuscleTendonComplex):
     """
-    VAS, vastus muscle
+     Vasti (VAS): Vasti is a group of 3 muscles located in the thigh and is responsible for
+        knee extension. Here VAS is modelled as a muscle actuating the knee extension in the
+        sagittal plane.
     """
+
     def __init__(self, angKne, timestep):
         frcmax = 6000  # maximum isometric force [N]
         lopt = 0.08  # optimum fiber length CE [m]
@@ -325,8 +344,12 @@ class VAS(MuscleTendonComplex):
 
 class REF(MuscleTendonComplex):
     """
-    REF, rectus femoris
+     Rectus Femoris (RF): The Rectus femoris muscle is one of the four quadriceps mus-
+        cles. It is located in the middle of the front of the thigh and is responsible for knee
+        extension and hip flexion. Here RF is modelled as a bi-articular MTU contributing to
+        the hip flexion and knee extension actuations in the sagittal plane.
     """
+
     def __init__(self, angHip, angKne, timestep):
         frcmax = 1200  # maximum isometric force [N]
         lopt = 0.08  # optimum fiber length CE [m]
@@ -364,10 +387,15 @@ class REF(MuscleTendonComplex):
 
 
 class HAM(MuscleTendonComplex):
+    """
+    Hamstrings (HAM): The hamstring muscles are a group of four muscles located in the
+        back of the thigh. They are bi-articular muscles crossing the hip and knee joints, so
+        they can help in both knee flexion and hip extension at the same time. Here HAM
+        is modelled as a bi-articular MTU contributing to the hip extension and knee flexion
+        actuations in the sagittal plane.
+    """
+
     def __init__(self, angHip, angKne, timestep):
-        """
-        HAM, hamstring
-        """
         frcmax = 3000  # maximum isometric force [N]
         lopt = 0.10  # optimum fiber length CE [m]
         vmax = 12.0  # maximum contraction velocity [lopt/s]
@@ -400,10 +428,14 @@ class HAM(MuscleTendonComplex):
 
 
 class HFL(MuscleTendonComplex):
+    """
+    Hip Flexor (HFL): The hip flexors are a group of muscles that help to bring the legs
+        and trunk together in a flexion movement. HFL allow us to move our leg or knee up
+        towards your torso, as well as to bend your torso forward at the hip. The HLF modelled
+        here is one of the actuator for the hip flexion in the sagittal plane.
+    """
+
     def __init__(self, angHip, timestep):
-        """
-        HFL, hip flexor
-        """
         frcmax = 2000  # maximum isometric force [N]
         lopt = 0.11  # optimum fiber length CE [m]
         vmax = 12.0  # maximum contraction velocity [lopt/s]
@@ -428,10 +460,14 @@ class HFL(MuscleTendonComplex):
 
 
 class GLU(MuscleTendonComplex):
+    """
+     Glutei (GLU): The glutei muscles are a group muscles in the gluteal region, in real life
+        locomotion their functions include extension, abduction, external rotation and internal
+        rotation of the hip joint. But here in the model GLU is modelled antagonistic to HFL
+        as hip extensor, acting as one of the hip joint actuator in the sagittal plane.
+    """
+
     def __init__(self, angHip, timestep):
-        """
-        GLU, gluteus maximus
-        """
         frcmax = 1500.0  # maximum isometric force [N]
         lopt = 0.11  # optimum fiber length CE [m]
         vmax = 12.0  # maximum contraction velocity [lopt/s]
@@ -457,8 +493,13 @@ class GLU(MuscleTendonComplex):
 
 class HAD(MuscleTendonComplex):
     """
-    HAD, hip adductor
+     Hip Adductor (HAD): Hip adductors in the thigh are a group of muscles near the groin
+        area which helps in moving the leg towards the midline of the body in the coronal
+        plane. They are basically the are antagonistic to the hip abductors and also help in
+        stabilizing the hip joint in real life locomotion. The HAD modelled here will act as the
+        second actuator for the hip adduction in the coronal plane.
     """
+
     def __init__(self, angHipFront, timestep):
         frcmax = 4500.0  # maximum isometric force [N]
         lopt = 0.10  # optimum fiber length CE [m]
@@ -489,8 +530,12 @@ class HAD(MuscleTendonComplex):
 
 class HAB(MuscleTendonComplex):
     """
-    HAB, hip abductor
+     Hip Abductor (HAB): The hip abductor muscles in the thigh include a group of muscles
+        which helps in moving the leg away from the midline of the body in the coronal plane.
+        They also help to rotate the thigh in the hip socket and to stabilize the hip joint. The
+        HAB modelled here will act as an actuator for the hip adbuction in the coronal plane.
     """
+
     def __init__(self, angHipFront, timestep):
         frcmax = 3000.0  # maximum isometric force [N]
         lopt = 0.09  # optimum fiber length CE [m]
