@@ -15,7 +15,7 @@ class PlotDataset(CollectDataset):
 
     """
     def __init__(self, mdp_info, obs_normalized=False, window_size=1000,
-                 update_freq=10, show=True):
+                 update_freq=10, show=True, mask_obs=None):
 
         """
         Constructor.
@@ -37,6 +37,11 @@ class PlotDataset(CollectDataset):
 
         """
         super().__init__()
+
+        self._mask_obs = mask_obs if mask_obs is not None else np.zeros((mdp_info.observation_space.shape[0],))
+        obs_high = mdp_info.observation_space.high[self._mask_obs == 0]
+        obs_low = mdp_info.observation_space.low[self._mask_obs == 0]
+        mdp_info.observation_space = Box(obs_low, obs_high)
 
         self.action_buffers_list = []
         for i in range(mdp_info.action_space.shape[0]):
@@ -115,6 +120,7 @@ class PlotDataset(CollectDataset):
 
         for sample in dataset:
             obs = sample[0]
+            obs = obs[self._mask_obs == 0]
             action = sample[1]
             reward = sample[2]
 
