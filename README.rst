@@ -1,3 +1,4 @@
+**********
 MushroomRL
 **********
 
@@ -30,7 +31,7 @@ It allows to perform RL experiments in a simple way providing classical RL algor
 (e.g. Q-Learning, SARSA, FQI), and deep RL algorithms (e.g. DQN, DDPG, SAC, TD3,
 TRPO, PPO).
 
-Full documentation available `here <http://mushroomrl.readthedocs.io/en/latest/>`_.
+`Full documentation and tutorials available here <http://mushroomrl.readthedocs.io/en/latest/>`_.
 
 Installation
 ============
@@ -78,6 +79,10 @@ installation follow the instructions on the `project page <https://github.com/op
 To use dm_control MushroomRL interface, install ``dm_control`` following the instruction that can
 be found `here <https://github.com/deepmind/dm_control>`_
 
+
+Editable Installation
+---------------------
+
 You can also perform a local editable installation by using:
 
 .. code:: shell
@@ -111,3 +116,8 @@ If you are using mushroom for your scientific publications, please cite:
          howpublished={\url{https://github.com/MushroomRL/mushroom-rl}}
    }
 
+How to contact us
+=================
+For any question, drop an e-mail at mushroom4rl@gmail.com.
+
+Follow us on Twitter `@Mushroom_RL <https://twitter.com/mushroom_rl>`_!
