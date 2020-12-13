@@ -176,7 +176,7 @@ class HumanoidGait(MuJoCo):
         start_vel = (
             self._sim.data.qvel[0:3] if (self.goal_reward is None or isinstance(
                 self.goal_reward, MaxVelocityReward)
-                                         ) else self.goal_reward.get_observation())
+                                         ) else self.goal_reward.get_observation()[0:3])
 
         self.mean_vel.reset(start_vel)
         self.mean_obs.reset(start_obs)

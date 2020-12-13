@@ -40,13 +40,15 @@
         <body name="torso" pos="0 0 1.08">
             <camera name="track" mode="trackcom" pos="0 -4 0" xyaxes="1 0 0 0 0 1"/>
 
-            <geom type="mesh" mesh="torso" material='mat_torso'/>
-            <geom name="torso" size="0.12 0.15 0.4" pos="0 0 0.4" rgba="0.6 0.3 0 0.1" type="box" />
+            <camera name="sagittal_left" mode="fixed" pos="0 4 0" euler="-1.54 0 3.26"/>
+
+            <geom type="mesh" mesh="torso" material='mat_torso' euler="0 0.2 0"/>
+            <geom name="torso" size="0.12 0.15 0.4" pos="0.07 0 0.4" rgba="0.6 0.3 0 0.1" type="box" euler="0 0.2 0"/>
             <!--Joint between world and torso-->
             <joint armature="0" damping="0" limited="false" name="root" pos="0 0 0" stiffness="0" type="free"/>
-            <inertial pos="0 0 0.35" mass="53.5" diaginertia="2.5 4.0 1.5"/>
+            <inertial pos="0.07 0 0.35" mass="53.5" diaginertia="2.5 4.0 1.5"/>
             <!--show center of mass position-->
-            <!--<geom name="torso_com" size="0.2" pos="0 0 0.3" type="sphere"/>-->
+            <!--geom name="torso_com" size="0.05" pos="0.07 0 0.35" type="sphere"/-->
 
             <!--define right thigh-->
             <body name="right_thigh" pos="0 -0.08 0"> 
