@@ -248,10 +248,9 @@ class HumanoidGait(MuJoCo):
     @staticmethod
     def _has_fallen(state):
         torso_euler = quat_to_euler(state[1:5])
-        return ((state[0] < 0.90) or (state[0] > 1.20)
-                or abs(torso_euler[0]) > np.pi / 12
-                or (torso_euler[1] < -np.pi / 12) or (torso_euler[1] > np.pi / 8)
-                or (torso_euler[2] < -np.pi / 4) or (torso_euler[2] > np.pi / 4)
+        return ((state[0] < 0.30) or (state[0] > 1.80)
+                or abs(torso_euler[0]) > np.pi / 2
+                or abs(torso_euler[1]) > np.pi / 2
                 )
 
     def _create_observation(self):

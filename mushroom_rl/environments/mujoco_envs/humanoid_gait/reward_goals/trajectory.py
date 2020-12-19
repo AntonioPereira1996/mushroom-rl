@@ -230,6 +230,6 @@ class HumanoidTrajectory(Trajectory):
 
             ax[1, j].plot(self.subtraj[7 + j + 14, 0:n_points])
             ax[1, j].plot(np.diff(
-                self.subtraj[7 + j, 0:n_points]) / self.control_dt)
+                self.subtraj[7 + j, 0:n_points]) / self.control_dt, alpha=0.5)
             ax[1, j].legend(["Joint {} vel".format(j), "derivate of pos"])
         plt.show()
