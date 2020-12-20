@@ -190,8 +190,10 @@ class HumanoidGait(MuJoCo):
 
         traj_vel_reward = 0.0
         if isinstance(self.goal_reward, HumanoidTrajectory):
-            traj_vel_reward = np.exp(-20.0 * np.square(
-                next_state[13] - next_state[33]))
+            traj_vel_reward = np.mean(np.exp(-20.0 * np.square(
+                next_state[13:16] - next_state[33:36])))
+
+            traj_vel_reward += np.mean(np.exp(np.square(next_state[1:5] - next_state[33:37])))
 
         move_cost = self.external_actuator.cost(
             state, action / self.norm_act_delta, next_state)
@@ -248,7 +250,7 @@ class HumanoidGait(MuJoCo):
     @staticmethod
     def _has_fallen(state):
         torso_euler = quat_to_euler(state[1:5])
-        return ((state[0] < 0.30) or (state[0] > 1.80)
+        return ((state[0] < 0.40) or (state[0] > 1.80)
                 or abs(torso_euler[0]) > np.pi / 2
                 or abs(torso_euler[1]) > np.pi / 2
                 )
@@ -271,7 +273,7 @@ class HumanoidGait(MuJoCo):
         obs[27:30] -> ground force on right foot(xyz)
         obs[30:33] -> ground force on left foot(xyz)
 
-        obs[33:33+(len(goal_observation)] -> observations related
+        obs[33:33+len(goal_observation)] -> observations related
                                              to the goal
 
         obs[last_obs_id - len(ext_actuator_obs): last_obs_id]
