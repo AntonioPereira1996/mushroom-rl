@@ -293,7 +293,7 @@ class CompleteTrajectoryReward(GoalRewardInterface, HumanoidTrajectory):
             self.get_next_sub_trajectory()
 
     def get_observation(self):
-        return np.append(self.velocity_profile[:, self.subtraj_step_no], self.subtraj[3:7, self.subtraj_step_no])
+        return np.append(self.subtraj[15:18, self.subtraj_step_no], self.subtraj[3:7, self.subtraj_step_no])
 
     def is_absorbing(self, state):
         return self.terminate_trajectory_flag

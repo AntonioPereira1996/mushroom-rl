@@ -178,7 +178,6 @@ class HumanoidTrajectory(Trajectory):
             self.subtraj_step_no = substep_no
 
         self.subtraj = self.trajectory.copy()
-        self.subtraj[0, :] -= self.subtraj[0, self.subtraj_step_no]
 
         self.sim.data.qpos[0:15] = self.subtraj[0:15, self.subtraj_step_no]
         self.sim.data.qvel[0:14] = self.subtraj[15:29, self.subtraj_step_no]
