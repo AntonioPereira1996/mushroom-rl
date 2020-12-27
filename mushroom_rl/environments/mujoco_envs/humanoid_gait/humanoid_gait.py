@@ -190,13 +190,11 @@ class HumanoidGait(MuJoCo):
 
         traj_vel_reward = 0.0
         if isinstance(self.goal_reward, HumanoidTrajectory):
-            traj_vel_reward = np.mean(np.exp(-20.0 * np.square(
-                next_state[13:16] - next_state[33:36])))
-
-            traj_vel_reward += np.mean(np.exp(np.square(next_state[1:5] - next_state[33:37])))
+            traj_vel_reward = 0.5 * np.mean(np.exp(-20.0 * np.square(next_state[13:16] - next_state[33:36])))
+            traj_vel_reward += 0.5 * np.mean(np.exp(-1 * np.square(next_state[1:5] - next_state[36:40])))
 
         move_cost = self.external_actuator.cost(
-            state, action / self.norm_act_delta, next_state)
+            state, (action - self.norm_act_mean) / self.norm_act_delta, next_state)
 
         fall_cost = 0.0
         if self._has_fallen(next_state):
@@ -250,9 +248,9 @@ class HumanoidGait(MuJoCo):
     @staticmethod
     def _has_fallen(state):
         torso_euler = quat_to_euler(state[1:5])
-        return ((state[0] < 0.40) or (state[0] > 1.80)
-                or abs(torso_euler[0]) > np.pi / 2
-                or abs(torso_euler[1]) > np.pi / 2
+        return ((state[0] < 0.9) or (state[0] > 1.2)
+                or abs(torso_euler[0]) > 0.3
+                or abs(torso_euler[1]) > 0.3
                 )
 
     def _create_observation(self):

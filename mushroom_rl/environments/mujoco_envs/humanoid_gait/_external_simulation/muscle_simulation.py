@@ -11,7 +11,7 @@ class NoExternalSimulation(object):
         return np.array([]), np.array([])
 
     def cost(self, state, action, next_state):
-        move_cost = np.tanh(np.mean(np.square(np.square(action))))
+        move_cost = np.mean(action)
         return move_cost
 
     def is_absorbing(self, state):
