@@ -21,7 +21,7 @@ class PPO(Agent):
 
     """
     def __init__(self, mdp_info, policy, actor_optimizer, critic_params,
-                 n_epochs_policy, batch_size, eps_ppo, lam, ent_weight,
+                 n_epochs_policy, batch_size, eps_ppo, lam, ent_weight=0.01,
                  critic_fit_params=None):
         """
         Constructor.
