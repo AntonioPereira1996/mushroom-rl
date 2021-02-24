@@ -190,7 +190,7 @@ class HumanoidTrajectory(Trajectory):
         self.x_dist += self.subtraj[0][-1]
         self.reset_trajectory()
 
-    def play_trajectory_demo(self, freq=200):
+    def play_trajectory_demo(self, speed=1):
         """
         Plays a demo of the loaded trajectory by forcing the model
         positions to the ones in the reference trajectory at every step
@@ -211,7 +211,7 @@ class HumanoidTrajectory(Trajectory):
             self.sim.forward()
 
             self.subtraj_step_no += 1
-            time.sleep(1 / freq)
+            time.sleep(self.control_dt / speed)
             viewer.render()
 
     def _plot_joint_trajectories(self, n_points=2000):
