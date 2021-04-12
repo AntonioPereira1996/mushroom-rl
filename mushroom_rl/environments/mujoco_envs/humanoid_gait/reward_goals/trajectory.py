@@ -83,10 +83,10 @@ class HumanoidTrajectory(Trajectory):
     """
     Loads a trajectory to be used by the humanoid environment. The trajectory
     file should be structured as:
-    trajectory[0:15] -> model's qpos;
-    trajectory[15:29] -> model's qvel;
-    trajectory[29:34] -> model's foot vector position
-    trajectory[34:36] -> model's ground force reaction over z
+    trajectory[0:17] -> model's qpos;
+    trajectory[17:33] -> model's qvel;
+    trajectory[33:38] -> model's foot vector position
+    trajectory[38:40] -> model's ground force reaction over z
 
     """
     def __init__(self, sim, traj_path, traj_dt=0.0025,
@@ -118,10 +118,10 @@ class HumanoidTrajectory(Trajectory):
         super().__init__(traj_path, traj_dt, control_dt, traj_speed_mult)
 
         self.sim = sim
-        self.trajectory[15:29] *= traj_speed_mult
+        self.trajectory[17:33] *= traj_speed_mult
 
         self.complete_velocity_profile = self._smooth_vel_profile(
-                self.trajectory[15:18],  window_size=velocity_smooth_window)
+                self.trajectory[17:21],  window_size=velocity_smooth_window)
 
         self.subtraj_step_no = 0
         self.x_dist = 0
@@ -179,8 +179,8 @@ class HumanoidTrajectory(Trajectory):
 
         self.subtraj = self.trajectory.copy()
 
-        self.sim.data.qpos[0:15] = self.subtraj[0:15, self.subtraj_step_no]
-        self.sim.data.qvel[0:14] = self.subtraj[15:29, self.subtraj_step_no]
+        self.sim.data.qpos[0:17] = self.subtraj[0:17, self.subtraj_step_no]
+        self.sim.data.qvel[0:16] = self.subtraj[17:33, self.subtraj_step_no]
 
     def get_next_sub_trajectory(self):
         """
@@ -203,11 +203,11 @@ class HumanoidTrajectory(Trajectory):
             if self.subtraj_step_no >= self.traj_length:
                 self.get_next_sub_trajectory()
 
-            self.sim.data.qpos[0:15] = np.r_[
+            self.sim.data.qpos[0:17] = np.r_[
                 self.x_dist + self.subtraj[0, self.subtraj_step_no],
-                self.subtraj[1:15, self.subtraj_step_no]
+                self.subtraj[1:17, self.subtraj_step_no]
             ]
-            self.sim.data.qvel[0:14] = self.subtraj[15:29, self.subtraj_step_no]
+            self.sim.data.qvel[0:16] = self.subtraj[17:33, self.subtraj_step_no]
             self.sim.forward()
 
             self.subtraj_step_no += 1
@@ -223,11 +223,11 @@ class HumanoidTrajectory(Trajectory):
         fig, ax = plt.subplots(2, 8, figsize=(15 * 8, 15))
         fig.suptitle("Complete Trajectories Sample", size=25)
 
-        for j in range(8):
+        for j in range(10):
             ax[0, j].plot(self.subtraj[7 + j, 0:n_points])
             ax[0, j].legend(["Joint {} pos".format(j)])
 
-            ax[1, j].plot(self.subtraj[7 + j + 14, 0:n_points])
+            ax[1, j].plot(self.subtraj[7 + j + 16, 0:n_points])
             ax[1, j].plot(np.diff(
                 self.subtraj[7 + j, 0:n_points]) / self.control_dt, alpha=0.5)
             ax[1, j].legend(["Joint {} vel".format(j), "derivate of pos"])

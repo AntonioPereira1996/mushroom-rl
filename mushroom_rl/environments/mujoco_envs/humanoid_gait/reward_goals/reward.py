@@ -98,7 +98,7 @@ class MaxVelocityReward(GoalRewardInterface):
             traj_start (bool, False): If model initial position should be set
                 from a valid trajectory state. If False starts from the
                 model.xml base position;
-            **kwargs: additional parameters which can be passed to
+            **kwargs (dict): additional parameters which can be passed to
                 trajectory when using ``traj_start``. ``traj_path`` should be
                 given to select a different trajectory. Rest of the arguments
                 are not important.
@@ -115,7 +115,7 @@ class MaxVelocityReward(GoalRewardInterface):
             self.reset_state()
 
     def __call__(self, state, action, next_state):
-        return next_state[13]
+        return next_state[15]
 
     def reset_state(self):
         if self.traj_start:
@@ -140,7 +140,7 @@ class VelocityProfileReward(GoalRewardInterface):
             traj_start (bool, False): If model initial position should be set
                 from a valid trajectory state. If False starts from the
                 model.xml base position;
-            **kwargs: additional parameters which can be passed to
+            **kwargs (dict): additional parameters which can be passed to
                 trajectory when using ``traj_start``. ``traj_path`` should be
                 given to select a diferent trajectory. Rest of the arguments
                 are not important.
@@ -159,7 +159,7 @@ class VelocityProfileReward(GoalRewardInterface):
             self.reset_state()
 
     def __call__(self, state, action, next_state):
-        return np.exp(-np.linalg.norm(next_state[13:16] - self.velocity_profile[0]))
+        return np.exp(-np.linalg.norm(next_state[15:18] - self.velocity_profile[0]))
 
     def update_state(self):
         self.velocity_profile.rotate(1)
@@ -241,15 +241,15 @@ class CompleteTrajectoryReward(GoalRewardInterface, HumanoidTrajectory):
         self.traj_data_range = np.clip(2 * np.std(self.euler_traj, axis=1), 0.15, np.inf)
 
         self.joint_importance = np.where(self.traj_data_range < 0.15, 2 * self.traj_data_range, 1.0)
-        self.joint_importance[2:14] *= 1.0
-        self.joint_importance[17:28] *= 0.1
-        self.joint_importance[28:34] *= 5.0
-        self.joint_importance = np.r_[self.joint_importance[2:14],
-                                      self.joint_importance[17:28],
-                                      self.joint_importance[28:34]]
+        self.joint_importance[2:16] *= 1.0
+        self.joint_importance[19:32] *= 0.1
+        self.joint_importance[32:38] *= 5.0
+        self.joint_importance = np.r_[self.joint_importance[2:16],
+                                      self.joint_importance[19:32],
+                                      self.joint_importance[32:38]]
 
-        self.traj_data_range = np.concatenate([self.traj_data_range[2:14],
-                                               self.traj_data_range[17:34]])
+        self.traj_data_range = np.concatenate([self.traj_data_range[2:16],
+                                               self.traj_data_range[19:38]])
 
     def __call__(self, state, action, next_state):
         traj_reward_vec = self._calculate_each_comp_reward(state, action,
@@ -273,12 +273,12 @@ class CompleteTrajectoryReward(GoalRewardInterface, HumanoidTrajectory):
             (self.sim.data.body_xpos[1] - self.sim.data.body_xpos[7])
         )
 
-        current_state = np.concatenate([euler_state[0:12],
-                                        euler_state[15:26], foot_vec])
+        current_state = np.concatenate([euler_state[0:14],
+                                        euler_state[17:30], foot_vec])
 
         current_target = np.concatenate(
-            [self.euler_traj[2:14, self.subtraj_step_no],
-            self.euler_traj[17:34, self.subtraj_step_no]]
+            [self.euler_traj[2:16, self.subtraj_step_no],
+            self.euler_traj[19:38, self.subtraj_step_no]]
         )
 
         current_error_standard = (np.subtract(current_state, current_target) /
@@ -293,7 +293,7 @@ class CompleteTrajectoryReward(GoalRewardInterface, HumanoidTrajectory):
             self.get_next_sub_trajectory()
 
     def get_observation(self):
-        return np.append(self.subtraj[15:18, self.subtraj_step_no], self.subtraj[3:7, self.subtraj_step_no])
+        return self.velocity_profile[:, self.subtraj_step_no]
 
     def is_absorbing(self, state):
         return self.terminate_trajectory_flag
