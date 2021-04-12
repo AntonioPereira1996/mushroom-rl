@@ -130,11 +130,13 @@
     <actuator>
         <motor ctrllimited="true" ctrlrange="-160 120" gear="1" joint="right_hip_frontal" name="right_hip_frontal"/>
         <motor ctrllimited="true" ctrlrange="-160 160" gear="1" joint="right_hip_sagittal" name="right_hip_sagittal"/>
+        <motor ctrllimited="true" ctrlrange="-160 160" gear="1" joint="right_hip_transverse" name="right_hip_transverse"/>
         <motor ctrllimited="true" ctrlrange="-160 120" gear="1" joint="right_knee" name="right_knee"/>
         <motor ctrllimited="true" ctrlrange="-60 120" gear="1" joint="right_ankle" name="right_ankle"/>
 
         <motor ctrllimited="true" ctrlrange="-120 160" gear="1" joint="left_hip_frontal" name="left_hip_frontal"/>
         <motor ctrllimited="true" ctrlrange="-160 160" gear="1" joint="left_hip_sagittal" name="left_hip_sagittal"/>
+        <motor ctrllimited="true" ctrlrange="-160 160" gear="1" joint="left_hip_transverse" name="left_hip_transverse"/>
         <motor ctrllimited="true" ctrlrange="-160 120" gear="1" joint="left_knee" name="left_knee"/>
         <motor ctrllimited="true" ctrlrange="-60 120" gear="1" joint="left_ankle" name="left_ankle"/>
     </actuator>
